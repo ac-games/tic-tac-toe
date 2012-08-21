@@ -1,4 +1,6 @@
 TicTacToe::Application.routes.draw do
+  resources :games
+
   get "users/index"
 
   get "users/show"
