@@ -5,5 +5,11 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    session[:in_game] = @game.id
+  end
+  
+  def destroy
+    session[:in_game] = false
+    redirect_to games_path
   end
 end

@@ -8,7 +8,7 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-
+  <%= params if Rails.env.development? %>
   <%= yield %>
 
   <% if user_signed_in? %>

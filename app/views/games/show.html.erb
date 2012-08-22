@@ -1,4 +1,3 @@
-<div>
-  <%= "Game#{@game.id}" %>
-</div>
-<%= link_to "All games", games_path %>
+<div><%= "Game#{@game.id}" %></div>
+<div><%= link_to "All games", games_path %></div>
+<div><%= link_to "Exit from game", game_path(@game), :method => :delete %></div>

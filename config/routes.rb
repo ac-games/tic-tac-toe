@@ -1,9 +1,7 @@
 TicTacToe::Application.routes.draw do
   resources :games
-
-  get "users/index"
-
-  get "users/show"
+  
+  resources :users
 
   devise_for :users, :path => "usuarios", :path_names => {
     :sign_in => 'login',
