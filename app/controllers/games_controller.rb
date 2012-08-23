@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   def index
     @games = Game.find_all_by_status(:created)
+    web_socket_start
   end
 
   def show
@@ -11,5 +12,11 @@ class GamesController < ApplicationController
   def destroy
     session[:in_game] = false
     redirect_to games_path
+  end
+  
+  protected
+  
+  def ws_onmessage(ws, data)
+    ws.send "GamesController: #{data}"
   end
 end
