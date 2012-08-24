@@ -16,7 +16,7 @@ class GamesController < ApplicationController
   
   protected
   
-  def ws_onmessage(ws, data)
-    ws.send "GamesController: #{data}"
+  def ws_onmessage
+    @ws.send "Games controller: #{@message}"
   end
 end
