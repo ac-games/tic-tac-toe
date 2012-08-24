@@ -2,29 +2,38 @@ require 'em-websocket'
 
 class ActionController::Base
   
+  WS_OPTIONS = { :host => "0.0.0.0", :port => 8080 }
+  
   protected
   
   def web_socket_start
-    Thread.new do
+    $thread = Thread.new do
       EventMachine.run {
-        EventMachine::WebSocket.start(:host => "0.0.0.0", :port => 8080) do |ws|
+        EventMachine::WebSocket.start(WS_OPTIONS) do |ws_client|
           
-          ws.onopen do
-            @ws = ws
+          ws_client.onopen do
+            @ws_client = ws_client
             ws_onopen
           end
           
-          ws.onmessage do |message|
-            @message = message
+          ws_client.onmessage do |ws_message|
+            @ws_message = ws_message
             ws_onmessage
           end
           
-          ws.onclose do
+          ws_client.onclose do
             ws_onclose
-            @ws, @message = []
+            @ws_client, @ws_message = []
           end
         end
       }
+    end
+  end
+  
+  def web_socket_stop
+    if $thread && $thread.alive?
+      EventMachine::WebSocket.stop
+      $thread = false
     end
   end
   

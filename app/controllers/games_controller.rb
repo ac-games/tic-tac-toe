@@ -1,7 +1,9 @@
 class GamesController < ApplicationController
+  before_filter :web_socket_stop
+  before_filter :web_socket_start, :only => :index
+  
   def index
     @games = Game.find_all_by_status(:created)
-    web_socket_start
   end
 
   def show
@@ -17,6 +19,6 @@ class GamesController < ApplicationController
   protected
   
   def ws_onmessage
-    @ws.send "Games controller: #{@message}"
+    @ws_client.send "GamesController: #{@ws_message}"
   end
 end
