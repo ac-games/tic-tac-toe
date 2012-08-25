@@ -2,11 +2,15 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
     
-ws = new WebSocket 'ws://localhost:8080'
+ws = new WebSocket 'ws://localhost:8888'
 
 ws.onmessage = (event) ->
-    alert event.data
+    data = JSON.parse(event.data)
+    if data.status == 'success'
+        alert data.data
+    else
+        alert data.message
 
-$("#test").live "click", (event) ->
+$("#create-new-game").live "click", (event) ->
     event.preventDefault()
-    ws.send 'Message from client'
+    ws.send JSON.stringify({ 'action': 'game_creation' })

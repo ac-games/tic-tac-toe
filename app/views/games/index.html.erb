@@ -1,10 +1,9 @@
 <ul>
   <% @games.each do |game| %>
     <li>
-      <%= link_to "Game#{game.id}", game_path(game) %>, создал
-      <%= game.users.first.email %>
+      <%= render 'game_info', :game => game %>
     </li>
   <% end %>
 </ul>
 
-<a id="test" href="#">TEST</a>
+<%= link_to "Создать игру", "#", :id => "create-new-game" %>
