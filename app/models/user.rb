@@ -10,4 +10,9 @@ class User < ActiveRecord::Base
   # attr_accessible :title, :body
   
   has_and_belongs_to_many :games
+  
+  def may_create_game?
+    reload
+    !games.map(&:user_win_id).include? nil
+  end
 end

@@ -13,6 +13,20 @@ class GamesController < ApplicationController
     session[:in_game] = @game.id
   end
   
+  def create
+    @game = Game.new
+    if current_user.may_create_game? && @game.save
+      @game.users << current_user
+      { :action => :game_creation,
+        :data => render_to_string({
+          :partial => 'game_info',
+          :locals => { :game => @game }
+      }) }
+    else
+      { :status => :error, :message => 'Ошибка: Не удалось создать новую игру' }
+    end
+  end
+  
   def destroy
     session[:in_game] = false
     redirect_to games_path
@@ -24,21 +38,7 @@ class GamesController < ApplicationController
     ws_message = ActiveSupport::JSON.decode @ws_message
     case ws_message['action']
     when 'game_creation'
-      @ws_client.send ws_response(game_creation)
-    end
-  end
-  
-  def game_creation
-    @game = Game.new
-    if @game.save
-      @game.users << current_user
-      { :action => :game_creation,
-        :data => render_to_string({
-          :partial => 'game_info',
-          :locals => { :game => @game }
-      }) }
-    else
-      { :status => :error, :message => 'Ошибка: Не удалось создать новую игру' }
+      @ws_client.send ws_response(create)
     end
   end
 end

@@ -7,7 +7,8 @@ ws = new WebSocket 'ws://localhost:8888'
 ws.onmessage = (event) ->
     data = JSON.parse(event.data)
     if data.status == 'success'
-        alert data.data
+        switch data.action
+            when 'game_creation' then $("#games_list").append data.data
     else
         alert data.message
 

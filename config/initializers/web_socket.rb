@@ -57,12 +57,6 @@ class ActionController::Base
   end
   
   def ws_response(response)
-    unless response.is_a? Hash
-      return {
-        :status => :error,
-        :message => 'Error: wrong response type'
-      }.to_json
-    end
     ws_response_base = {
       :status => :success,
       :action => '',
