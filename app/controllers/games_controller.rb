@@ -1,8 +1,6 @@
 # coding: utf-8
 
 class GamesController < ApplicationController
-  before_filter :web_socket_stop
-  before_filter :web_socket_start, :only => :index
   
   def index
     @games = Game.find_all_by_status(:created)
@@ -15,30 +13,22 @@ class GamesController < ApplicationController
   
   def create
     @game = Game.new
-    if current_user.may_create_game? && @game.save
-      @game.users << current_user
-      { :action => :game_creation,
-        :data => render_to_string({
-          :partial => 'game_info',
-          :locals => { :game => @game }
-      }) }
-    else
-      { :status => :error, :message => 'Ошибка: Не удалось создать новую игру' }
+    respond_to do |format|
+      if current_user.may_create_game? && @game.save
+        @game.users << current_user
+        format.html {
+          render(:partial => 'game_info', :locals => {
+            :game => @game
+          })
+        }
+      else
+        format.js { render(:js => 'error') }
+      end
     end
   end
   
   def destroy
     session[:in_game] = false
     redirect_to games_path
-  end
-  
-  protected
-  
-  def ws_onmessage
-    ws_message = ActiveSupport::JSON.decode @ws_message
-    case ws_message['action']
-    when 'game_creation'
-      @ws_client.send ws_response(create)
-    end
   end
 end
