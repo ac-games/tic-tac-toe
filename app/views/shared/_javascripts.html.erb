@@ -1,0 +1,8 @@
+<%= javascript_include_tag :application %>
+
+<!-- Инициализируем текущий контроллер -->
+<%= cs_include_tag params[:controller] %>
+<!-- Инициализируем текущее действие -->
+<%= cs_include_tag "#{params[:controller]}/#{params[:action]}" %>
+<!-- Запускаем текущее действие -->
+<%= cs_launch_action %>

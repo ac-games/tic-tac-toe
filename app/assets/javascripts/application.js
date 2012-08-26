@@ -12,3 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
+$.app = {
+    interval: 1000
+}
