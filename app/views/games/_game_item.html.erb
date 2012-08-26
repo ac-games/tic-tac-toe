@@ -1,4 +1,4 @@
 <li>
-  <%= link_to "Game#{game.id}", game_path(game) %>,
-  создал <%= game.users.first.email %>
+  Игра №<%= game.id %>, создал <%= game.users.first.email %>
+  (<%= link_to "присоединиться", game_path(game) %>)
 </li>

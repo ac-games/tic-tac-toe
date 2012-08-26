@@ -1,3 +1,2 @@
-<div><%= "Game#{@game.id}" %></div>
-<div><%= link_to "All games", games_path %></div>
-<div><%= link_to "Exit from game", game_path(@game), :method => :delete %></div>
+<div>Вы находитесь в игре №<%= @game.id %></div>
+<div><%= link_to "Выйти из игры", game_path(@game), :method => :delete %></div>
