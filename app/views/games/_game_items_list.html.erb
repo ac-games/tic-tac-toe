@@ -1,9 +1,13 @@
-<ul>
-  <li id="game-items-list-title" class="game-item">
-    <span>Название игры</span>
-    <span class='game-creator-name'>Создатель игры</span>
-  </li>
-  <% games.each do |game| %>
-    <%= render 'game_item', :game => game %>
-  <% end %>
-</ul>
+<% if games.count > 0 %>
+  <ul>
+    <li id="game-items-list-title" class="game-item">
+      <span>Название игры</span>
+      <span class='game-creator-name'>Создатель игры</span>
+    </li>
+    <% games.each do |game| %>
+      <%= render 'game_item', :game => game %>
+    <% end %>
+  </ul>
+<% else %>
+  Нет свободных игр
+<% end %>
