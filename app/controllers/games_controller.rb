@@ -17,7 +17,7 @@ class GamesController < ApplicationController
       if current_user.may_create_game? && @game.save
         @game.users << current_user
         format.html {
-          render(:partial => 'game_info', :locals => {
+          render(:partial => 'game_item', :locals => {
             :game => @game
           })
         }

@@ -1,6 +1,6 @@
-<ul id="games_list">
+<ul id="game-items-list">
   <% @games.each do |game| %>
-    <%= render 'game_info', :game => game %>
+    <%= render 'game_item', :game => game %>
   <% end %>
 </ul>
 

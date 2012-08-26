@@ -9,4 +9,4 @@ $("#create-new-game").live "click", (event) ->
         url: "/games"
         success: (data) ->
             if (data != 'error')
-                $("#games_list").append data
+                $("#game-items-list").append data
