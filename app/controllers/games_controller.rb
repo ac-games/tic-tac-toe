@@ -19,11 +19,6 @@ class GamesController < ApplicationController
     get_games
   end
   
-  def destroy
-    session[:in_game] = false
-    redirect_to games_path
-  end
-  
   def get_games
     respond_to do |format|
       format.html {
