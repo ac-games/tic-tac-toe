@@ -1,14 +1,10 @@
 <li class='game-item'>
-  <span>
-    Игра №<%= game.id %>
-  </span>
-  <span class='game-creator-name'>
-    <%= game.users.first.email %>
-  </span>
-  <span>
-    <%= link_to "присоединиться", game_path(game) %>
-  </span>
-  <span>
-    
-  </span>
+  <span>Игра №<%= game.id %></span>
+  <span class='game-creator-name'><%= game.users.first.email %></span>
+  <% if current_user.current_game.nil? %>
+    <span><%= link_to "присоединиться", game_path(game) %></span>
+  <% end %>
+  <% if current_user.current_game == game %>
+    <span><%= link_to "удалить", game_path(game), :method => :delete %></span>
+  <% end %>
 </li>

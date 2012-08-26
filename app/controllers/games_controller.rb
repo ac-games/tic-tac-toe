@@ -8,15 +8,20 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    session[:in_game] = @game.id
   end
   
   def create
     @game = Game.new
-    if current_user.may_create_game? && @game.save
+    if current_user.current_game.nil? && @game.save
       @game.users << current_user
     end
     get_games
+  end
+  
+  def destroy
+    @game = Game.find(params[:id])
+    @game.delete
+    redirect_to games_path
   end
   
   def get_games
