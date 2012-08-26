@@ -1,4 +1,10 @@
 <ul>
+  <li id="game-items-list-title">
+    <span class='game-item'>Название игры</span>
+    <span class='game-item game-creator-name'>Создатель игры</span>
+    <span class='game-item'></span>
+    <span class='game-item'></span>
+  </li>
   <% games.each do |game| %>
     <%= render 'game_item', :game => game %>
   <% end %>

@@ -1,4 +1,14 @@
 <li>
-  Игра №<%= game.id %>, создал <%= game.users.first.email %>
-  (<%= link_to "присоединиться", game_path(game) %>)
+  <span class='game-item'>
+    Игра №<%= game.id %>
+  </span>
+  <span class='game-item game-creator-name'>
+    <%= game.users.first.email %>
+  </span>
+  <span class='game-item'>
+    <%= link_to "присоединиться", game_path(game) %>
+  </span>
+  <span class='game-item'>
+    
+  </span>
 </li>
