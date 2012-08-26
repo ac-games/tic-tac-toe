@@ -1,14 +1,14 @@
-<li>
-  <span class='game-item'>
+<li class='game-item'>
+  <span>
     Игра №<%= game.id %>
   </span>
-  <span class='game-item game-creator-name'>
+  <span class='game-creator-name'>
     <%= game.users.first.email %>
   </span>
-  <span class='game-item'>
+  <span>
     <%= link_to "присоединиться", game_path(game) %>
   </span>
-  <span class='game-item'>
+  <span>
     
   </span>
 </li>
