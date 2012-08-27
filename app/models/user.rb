@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   # attr_accessible :title, :body
   
   has_and_belongs_to_many :games
+  has_one :game_state
   
   def current_game
     reload
