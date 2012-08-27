@@ -8,19 +8,25 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    @game.users << current_user
+    @game.update_attribute(:status, :started)
   end
   
   def create
     @game = Game.new
+    @game_state = GameState.new
     if current_user.current_game.nil? && @game.save
       @game.users << current_user
+      @game_state.game = @game
+      @game_state.current_user = current_user
+      @game.delete unless @game_state.save
     end
     get_games
   end
   
   def destroy
     @game = Game.find(params[:id])
-    @game.delete
+    @game.destroy
     redirect_to games_path
   end
   

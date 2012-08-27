@@ -12,5 +12,9 @@ class GameState < ActiveRecord::Base
   attr_accessible
   
   belongs_to :game
-  belongs_to :user, :foreign_key => 'current_user_id'
+  belongs_to :user, :foreign_key => :current_user_id
+  
+  def current_user=(user)
+    self.user = user
+  end
 end

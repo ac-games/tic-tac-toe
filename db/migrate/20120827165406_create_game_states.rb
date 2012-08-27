@@ -4,6 +4,8 @@ class CreateGameStates < ActiveRecord::Migration
       t.integer :game_id
       t.integer :current_user_id
       t.string :game_field, :default => " | | | | | | | | "
+      
+      t.timestamps
     end
   end
 end
