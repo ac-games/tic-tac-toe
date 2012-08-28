@@ -1,0 +1,9 @@
+<table id="field-table">
+  <% 3.times do |n| %>
+    <tr>
+      <% game_state.game_field.split('|')[n*3..n*3+2].each do |cell| %>
+        <td><%= cell %></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
