@@ -16,7 +16,11 @@ module ApplicationHelper
   
   def cs_launch_action
     if this_cs_file? "#{params[:controller]}/#{params[:action]}"
-      javascript_tag "$.app.#{params[:controller]}.#{params[:action]}();"
+      javascript_tag <<-JAVASCRIPT
+          $(document).ready(function(){
+              $.app.#{params[:controller]}.#{params[:action]}();
+          });
+      JAVASCRIPT
     end
   end
 end

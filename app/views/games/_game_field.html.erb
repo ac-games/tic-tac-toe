@@ -1,8 +1,12 @@
 <table id="field-table">
-  <% 3.times do |n| %>
+  <% 3.times do |i| %>
     <tr>
-      <% game_state.game_field.split('|')[n*3..n*3+2].each do |cell| %>
-        <td><%= cell %></td>
+      <% game_state.game_field
+                   .split('|')[i*3..i*3+2]
+                   .each_with_index do |cell, j| %>
+        <td data-i="<%= i %>" data-j="<%= j %>">
+          <%= cell %>
+        </td>
       <% end %>
     </tr>
   <% end %>

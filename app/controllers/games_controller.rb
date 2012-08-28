@@ -41,4 +41,18 @@ class GamesController < ApplicationController
       }
     end
   end
+  
+  def get_game_state
+    respond_to do |format|
+      format.json do
+        render :json => {
+          :html => render_to_string(
+            :partial => '/games/game_field.html.erb',
+            :locals => {
+              :game_state => GameState.first
+            })
+        }
+      end
+    end
+  end
 end
