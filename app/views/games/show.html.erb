@@ -1,2 +1,10 @@
 <div>Вы находитесь в игре №<%= @game.id %></div>
-<div><%= link_to "Выйти из игры", games_path %></div>
+<div>Ваш противник: <%= opponent_user.email %></div>
+<div id="game-field"><%= @game_state.game_field %></div>
+<div>
+  Сейчас ходит:
+  <div id="game-state-current-user">
+    <%= @game_state.current_user.email %>
+  </div>
+</div>
+<div id="game-timer"></div>

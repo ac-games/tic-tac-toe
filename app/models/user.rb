@@ -35,4 +35,11 @@ class User < ActiveRecord::Base
     reload
     games.where(:user_win_id => nil).first
   end
+  
+  def opponent
+    current_game = self.games.find_by_status :started
+    User.joins(:games)
+        .where('users.id != ? AND games.id = ?', self, current_game)
+        .first
+  end
 end

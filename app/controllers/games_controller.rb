@@ -10,6 +10,8 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     @game.users << current_user
     @game.update_attribute(:status, :started)
+    
+    @game_state = @game.game_state
   end
   
   def create

@@ -14,6 +14,10 @@ class GameState < ActiveRecord::Base
   belongs_to :game
   belongs_to :user, :foreign_key => :current_user_id
   
+  def current_user
+    self.user
+  end
+  
   def current_user=(user)
     self.user = user
   end
