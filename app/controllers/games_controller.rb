@@ -43,15 +43,22 @@ class GamesController < ApplicationController
   end
   
   def get_game_state
+    @game = Game.find(params[:game_id])
+    @game_state = @game.game_state
     respond_to do |format|
-      format.json do
-        render :json => {
-          :html => render_to_string(
-            :partial => '/games/game_field.html.erb',
-            :locals => {
-              :game_state => GameState.first
-            })
-        }
+      if @game_state.current_user == current_user
+        format.json do
+          render :json => {
+            :status => :success,
+            :html => render_to_string(
+              :partial => 'game_field.html',
+              :locals => {
+                :game_state => @game_state
+              })
+          }
+        end
+      else
+        format.json { render :json => { :status => :out_of_turn } }
       end
     end
   end
