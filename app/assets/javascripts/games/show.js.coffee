@@ -5,10 +5,26 @@ $.app.games.show = () ->
         'my_turn':    false
         'start_time': 300
     # events
-    
+    $("#field-table td").live "click", @.put_the_symbol
     # actions
     @.reset_timer()
     setInterval @.time_step, @timer_interval
+
+$.app.games.put_the_symbol = () ->
+    if $.app.games.my_turn
+        $.ajax
+            type: "POST"
+            data:
+                position: $(@).data()
+            url: "#{$.app.games.game_id}/put_the_symbol"
+            success: (data) ->
+                if data.status == 'success'
+                    $("#game-field").html data.html
+                    $.app.games.my_turn = false
+                    $.app.games.reset_timer()
+                if data.status == 'game_is_over'
+                    $("#game-field").html data.html
+                    alert data.win_user
 
 $.app.games.time_step = () ->
     if $.app.games.my_turn
@@ -35,3 +51,4 @@ $.app.games.get_game_state = () ->
             if data.status == 'success'
                 $("#game-field").html data.html
                 $.app.games.my_turn = true
+                $.app.games.reset_timer()
