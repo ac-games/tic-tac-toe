@@ -41,7 +41,7 @@ $.app.games.update_timer = () ->
     if time > 0
         $timer.text(time - 1)
     else
-        $("#game-timer").text("Время вышло!")
+        $timer.text("Время вышло!")
 
 $.app.games.get_game_state = () ->
     $.ajax
