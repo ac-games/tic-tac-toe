@@ -34,11 +34,9 @@ class GamesController < ApplicationController
   
   def get_games
     respond_to do |format|
-      format.html {
-        render(:partial => 'game_items_list', :locals => {
-          :games => Game.find_all_by_status(:created)
-        })
-      }
+      success_json_render format,
+        :partial => 'game_items_list.html',
+        :locals => { :games => Game.find_all_by_status(:created) }
     end
   end
   
@@ -46,54 +44,33 @@ class GamesController < ApplicationController
     @game = Game.find(params[:game_id])
     respond_to do |format|
       if @game.game_state.current_user == current_user
-        format.json do
-          render :json => {
-            :status => :success,
-            :html => render_to_string(
-              :partial => 'game_field.html',
-              :locals => {
-                :game_state => @game.game_state
-              })
-          }
-        end
+        success_json_render format,
+          :partial => 'game_field.html',
+          :locals => { :game_state => @game.game_state }
       else
-        format.json { render :json => { :status => :out_of_turn } }
+        format.json { render :json => { :status => :waiting } }
       end
     end
   end
   
   def put_the_symbol
     @game = Game.find(params[:game_id])
+    @game_state = @game.game_state
     respond_to do |format|
-      if @game.game_state.current_user == current_user
-        symbol = @game.users.first == current_user ? 'X' : 'O'
-        if @game.game_state.put_the_symbol(symbol, params[:position])
-          @game.reload
-          win_sym = @game.game_state.who_won?
-          win_user = win_sym == 'X' ? current_user : current_user.opponent if win_sym
-          unless win_user
-            @game.game_state.update_attribute :current_user, current_user.opponent
-            format.json do
-              render :json => {
-                :status => :success,
-                :html => render_to_string(
-                  :partial => 'game_field.html',
-                  :locals => {
-                    :game_state => @game.game_state
-                  })
-              }
-            end
+      if @game_state.current_user == current_user
+        symbol = @game.main_user == current_user ? 'X' : 'O'
+        if @game_state.put_the_symbol(symbol, params[:position])
+          win_user = @game_state.who_won?
+          if win_user
+            options = { :status => :game_is_over, :win_user => win_user.email }
           else
-            format.json { render :json => {
-              :status => :game_is_over,
-              :win_user => win_user.email,
-              :html => render_to_string(
-                :partial => 'game_field.html',
-                :locals => {
-                  :game_state => @game.game_state
-                })
-            } }
+            @game_state.pass_the_turn
+            options = { }
           end
+          success_json_render format, {
+            :partial => 'game_field.html',
+            :locals => { :game_state => @game_state }
+          }.merge(options)
         else
           format.json { render :json => { :status => :bad_position } }
         end
@@ -101,5 +78,21 @@ class GamesController < ApplicationController
         format.json { render :json => { :status => :out_of_turn } }
       end
     end
+  end
+  
+  private
+  
+  def success_json_render(format, options)
+    json = {
+      :status => :success,
+      :html => render_to_string(
+          :partial => options[:partial],
+          :locals => options[:locals]
+      )
+    }
+    options.delete :partial
+    options.delete :locals
+    json.merge!(options)
+    format.json { render :json => json }
   end
 end

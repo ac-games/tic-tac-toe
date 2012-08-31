@@ -14,4 +14,9 @@ class Game < ActiveRecord::Base
   
   has_and_belongs_to_many :users
   has_one :game_state, :dependent => :destroy
+  
+  # Пользователь, создавший игру
+  def main_user
+    users.first
+  end
 end
