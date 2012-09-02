@@ -7,7 +7,7 @@ $.app.games.show = () ->
     # events
     $("#field-table td").live "click", @.put_the_symbol
     # actions
-    setInterval @.time_step, @timer_interval
+    @timer = setInterval @.time_step, @timer_interval
 
 $.app.games.put_the_symbol = () ->
     if $.app.games.my_turn
@@ -24,15 +24,13 @@ $.app.games.put_the_symbol = () ->
                 if data.status == 'game_is_over'
                     $("#game-field").html data.html
                     alert "Победил #{data.win_user}"
+                if data.status == 'time_is_up'
+                    alert "Время вышло! Победил #{data.win_user}"
 
 $.app.games.time_step = () ->
     $.app.games.update_timer()
     unless $.app.games.my_turn
         $.app.games.get_game_state()
-    #if $.app.games.my_turn
-    #    $.app.games.update_timer()
-    #else
-    #    $.app.games.get_game_state()
 
 $.app.games.reset_timer = () ->
     $("#game-timer").text(@start_time)
@@ -44,6 +42,8 @@ $.app.games.update_timer = () ->
         $timer.text(time - 1)
     else
         $timer.text("Время вышло!")
+        clearInterval(@timer)
+        $("#field-table td:first").click()
 
 $.app.games.get_game_state = () ->
     $.ajax

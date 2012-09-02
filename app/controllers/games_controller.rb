@@ -60,6 +60,12 @@ class GamesController < ApplicationController
     @game_state = @game.game_state
     respond_to do |format|
       if @game_state.current_user == current_user
+        if @game_state.remaining_time == 0
+          format.json { render :json => {
+            :status => :time_is_up,
+            :win_user => current_user.opponent.email
+          } }
+        end
         symbol = @game.main_user == current_user ? 'X' : 'O'
         if @game_state.put_the_symbol(symbol, params[:position])
           win_user = @game_state.who_won?

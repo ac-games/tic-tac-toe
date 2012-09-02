@@ -2,14 +2,17 @@
 #
 # Table name: game_states
 #
-#  id              :integer          not null, primary key
-#  game_id         :integer
-#  current_user_id :integer
-#  game_field      :string(255)
+#  id               :integer          not null, primary key
+#  game_id          :integer
+#  current_user_id  :integer
+#  game_field       :string(255)      default(" | | | | | | | | ")
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  timer_updated_at :datetime
 #
 
 class GameState < ActiveRecord::Base
-  attr_accessible
+  attr_accessible :current_user, :timer_updated_at
   
   belongs_to :game
   belongs_to :user, :foreign_key => :current_user_id
@@ -28,9 +31,13 @@ class GameState < ActiveRecord::Base
   
   # Переход хода
   def pass_the_turn
-    self.update_attribute :current_user, self.current_user.opponent
+    self.update_attributes({
+      :current_user => self.current_user.opponent,
+      :timer_updated_at => Time.now
+    })
   end
   
+  # Возвращает время, оставшееся до конца хода в секундах
   def remaining_time
     if self.timer_updated_at.nil?
       self.update_attribute :timer_updated_at, Time.now
