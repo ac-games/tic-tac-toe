@@ -41,9 +41,16 @@ $.app.games.update_timer = () ->
     if time > 0
         $timer.text(time - 1)
     else
-        $timer.text("Время вышло!")
-        clearInterval(@timer)
-        $("#field-table td:first").click()
+        $.ajax
+            type: "POST"
+            url: "/games/#{$.app.games.game_id}/time_is_up"
+            success: (data) ->
+                if data.status == 'time_is_up'
+                    alert "Время вышло! Победил #{data.win_user}"
+                    $timer.text("Время вышло!")
+                    clearInterval($.app.games.timer)
+                if data.status == 'is_not_true'
+                    $timer.text(data.remaining_time)
 
 $.app.games.get_game_state = () ->
     $.ajax

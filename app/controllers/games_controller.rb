@@ -55,6 +55,23 @@ class GamesController < ApplicationController
     end
   end
   
+  def time_is_up
+    @game = Game.find(params[:game_id])
+    respond_to do |format|
+      if @game.game_state.remaining_time == 0
+        format.json { render :json => {
+          :status => :time_is_up,
+          :win_user => @game.game_state.current_user.opponent.email
+        } }
+      else
+        format.json { render :json => {
+          :status => :is_not_true,
+          :remaining_time => @game.game_state.remaining_time
+        } }
+      end
+    end
+  end
+  
   def put_the_symbol
     @game = Game.find(params[:game_id])
     @game_state = @game.game_state
