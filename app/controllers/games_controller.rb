@@ -8,6 +8,9 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    if @game.status == 'closed'
+      redirect_to games_path
+    end
     @game.users << current_user
     @game.update_attribute(:status, :started)
     
