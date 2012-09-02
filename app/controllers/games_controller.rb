@@ -42,13 +42,23 @@ class GamesController < ApplicationController
   
   def get_game_state
     @game = Game.find(params[:game_id])
+    @game_state = @game.game_state
     respond_to do |format|
-      if @game.game_state.current_user == current_user
+      if @game_state.current_user == current_user
         success_json_render format,
           :partial => 'game_field.html',
-          :locals => { :game_state => @game.game_state }
+          :locals => { :game_state => @game_state }
       else
-        format.json { render :json => { :status => :waiting } }
+        if @game.status == 'closed'
+          win_user = @game_state.who_won?
+          options = { :status => :game_is_over, :win_user => win_user.email }
+          success_json_render format, {
+            :partial => 'game_field.html',
+            :locals => { :game_state => @game_state }
+          }.merge(options)
+        else
+          format.json { render :json => { :status => :waiting } }
+        end
       end
     end
   end
@@ -63,6 +73,8 @@ class GamesController < ApplicationController
           win_user = @game_state.who_won?
           if win_user
             options = { :status => :game_is_over, :win_user => win_user.email }
+            @game.status = 'closed'
+            @game.save
           else
             @game_state.pass_the_turn
             options = { }

@@ -52,3 +52,6 @@ $.app.games.get_game_state = () ->
                 $("#game-field").html data.html
                 $.app.games.my_turn = true
                 $.app.games.reset_timer()
+            if data.status == 'game_is_over'
+                    $("#game-field").html data.html
+                    alert "Победил #{data.win_user}"
