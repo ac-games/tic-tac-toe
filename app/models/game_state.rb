@@ -14,6 +14,8 @@ class GameState < ActiveRecord::Base
   belongs_to :game
   belongs_to :user, :foreign_key => :current_user_id
   
+  TIME_TO_TURN = 30
+  
   # Получить пользователя, который сейчас ходит
   def current_user
     self.user
@@ -26,6 +28,14 @@ class GameState < ActiveRecord::Base
   
   def pass_the_turn
     self.update_attribute :current_user, self.current_user.opponent
+  end
+  
+  def remaining_time
+    if self.timer_updated_at.nil?
+      self.update_attribute :timer_updated_at, Time.now
+    end
+    bygone_time = (Time.now - self.timer_updated_at).seconds.to_i
+    return bygone_time < TIME_TO_TURN ? TIME_TO_TURN - bygone_time : 0
   end
   
   # Возвращает победившего пользователя или false, если игра ещё не закончена

@@ -12,6 +12,8 @@ class GamesController < ApplicationController
     @game.update_attribute(:status, :started)
     
     @game_state = @game.game_state
+    
+    @time = @game_state.remaining_time
   end
   
   def create
