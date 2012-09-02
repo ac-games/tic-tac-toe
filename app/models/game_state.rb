@@ -26,6 +26,7 @@ class GameState < ActiveRecord::Base
     self.user = user
   end
   
+  # Переход хода
   def pass_the_turn
     self.update_attribute :current_user, self.current_user.opponent
   end
