@@ -8,7 +8,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    if @game.status == 'closed'
+    unless @game.status == 'started'
       redirect_to games_path
     end
     @game.users << current_user
