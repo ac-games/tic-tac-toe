@@ -25,6 +25,7 @@ $.app.games.put_the_symbol = () ->
                 if data.status == 'game_is_over'
                     $("#game-field").html data.html
                     alert "Победил #{data.win_user}"
+                    window.location = "/games"
 
 $.app.games.time_step = () ->
     if $.app.games.my_turn
@@ -52,3 +53,7 @@ $.app.games.get_game_state = () ->
                 $("#game-field").html data.html
                 $.app.games.my_turn = true
                 $.app.games.reset_timer()
+            if data.status == 'game_is_over'
+                    $("#game-field").html data.html
+                    alert "Победил #{data.win_user}"
+                    window.location = "/games"
