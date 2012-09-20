@@ -3,6 +3,7 @@ TicTacToe::Application.routes.draw do
     post 'get_games', :on => :collection
     post 'get_game_state'
     post 'put_the_symbol'
+    post 'time_is_up'
   end
   
   resources :users

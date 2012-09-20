@@ -32,18 +32,14 @@ class User < ActiveRecord::Base
   has_one :game_state
   
   # Возвращает игру пользователя, для которой ещё не определён победитель
-  # На самом деле, странный ход. А если какой-то баг, и пользователь будет
-  # попадать в первую попавшуюся игру со статусом !'closed'?Или может я код недопонял.
   def current_game
     reload
-    games.where(:status != 'closed').first
+    games.where('status != ?', :closed).first
   end
   
-  # Возвращает пользователя, являющегося для текущего противником по игре
+  # Возвращает пользователя, являющегося для текущего противником по текущей игре
   def opponent
-    current_game = self.games.find_by_status :started
-    User.joins(:games)
-        .where('users.id != ? AND games.id = ?', self, current_game)
-        .first
+    current_game = self.games.find_by_status(:started)
+    current_game.game_state.opponent_user
   end
 end
