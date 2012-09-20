@@ -34,14 +34,12 @@ class User < ActiveRecord::Base
   # Возвращает игру пользователя, для которой ещё не определён победитель
   def current_game
     reload
-    games.where(:user_win_id => nil).first
+    games.where('status != ?', :closed).first
   end
   
-  # Возвращает пользователя, являющегося для текущего противником по игре
+  # Возвращает пользователя, являющегося для текущего противником по текущей игре
   def opponent
-    current_game = self.games.find_by_status :started
-    User.joins(:games)
-        .where('users.id != ? AND games.id = ?', self, current_game)
-        .first
+    current_game = self.games.find_by_status(:started)
+    current_game.game_state.opponent_user
   end
 end

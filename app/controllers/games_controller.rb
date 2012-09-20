@@ -8,8 +8,11 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    unless @game.status.in? ['started', 'created']
+      redirect_to games_path
+    end
     @game.users << current_user
-    @game.update_attribute(:status, :started)
+    @game.update_attribute(:status, :started) if @game.status == 'created'
     
     @game_state = @game.game_state
     
@@ -44,13 +47,23 @@ class GamesController < ApplicationController
   
   def get_game_state
     @game = Game.find(params[:game_id])
+    @game_state = @game.game_state
     respond_to do |format|
-      if @game.game_state.current_user == current_user
+      if @game_state.current_user == current_user
         success_json_render format,
           :partial => 'game_field.html',
-          :locals => { :game_state => @game.game_state }
+          :locals => { :game_state => @game_state }
       else
-        format.json { render :json => { :status => :waiting } }
+        if @game.status == 'closed'
+          win_user = @game_state.who_won?
+          options = { :status => :game_is_over, :win_user => win_user.email }
+          success_json_render format, {
+            :partial => 'game_field.html',
+            :locals => { :game_state => @game_state }
+          }.merge(options)
+        else
+          format.json { render :json => { :status => :waiting } }
+        end
       end
     end
   end
@@ -59,9 +72,10 @@ class GamesController < ApplicationController
     @game = Game.find(params[:game_id])
     respond_to do |format|
       if @game.game_state.remaining_time == 0
-        format.json { render :json => {
-          :status => :time_is_up,
-          :win_user => @game.game_state.current_user.opponent.email
+        @game.update_attribute(:status, :closed)
+        format.json { render json: {
+          status: :time_is_up,
+          win_user: @game.game_state.opponent_user.email
         } }
       else
         format.json { render :json => {
@@ -78,9 +92,10 @@ class GamesController < ApplicationController
     respond_to do |format|
       if @game_state.current_user == current_user
         if @game_state.remaining_time == 0
+          @game.update_attribute(:status, :closed)
           format.json { render :json => {
             :status => :time_is_up,
-            :win_user => current_user.opponent.email
+            :win_user => @game_state.opponent_user.email
           } }
         end
         symbol = @game.main_user == current_user ? 'X' : 'O'
@@ -88,6 +103,7 @@ class GamesController < ApplicationController
           win_user = @game_state.who_won?
           if win_user
             options = { :status => :game_is_over, :win_user => win_user.email }
+            @game.update_attribute(:status, :closed)
           else
             @game_state.pass_the_turn
             options = { }

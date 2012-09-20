@@ -24,6 +24,13 @@ class GameState < ActiveRecord::Base
     self.user
   end
   
+  # Получить пользователя, который является противником ходящего
+  def opponent_user
+    User.joins(:games)
+        .where('users.id != ? AND games.id = ?', self.current_user, self.game)
+        .first
+  end
+  
   # Задать пользователя, который сейчас ходит
   def current_user=(user)
     self.user = user
@@ -32,7 +39,7 @@ class GameState < ActiveRecord::Base
   # Переход хода
   def pass_the_turn
     self.update_attributes({
-      :current_user => self.current_user.opponent,
+      :current_user => self.opponent_user,
       :timer_updated_at => Time.now
     })
   end
