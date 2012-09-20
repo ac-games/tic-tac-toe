@@ -4,7 +4,7 @@
   <% if current_user.current_game.nil? %>
     <span><%= link_to "присоединиться", game_path(game) %></span>
   <% end %>
-  <% if current_user.current_game == game %>
+  <% if current_user == game.main_user %>
     <span><%= link_to "удалить", game_path(game), :method => :delete %></span>
   <% end %>
 </li>

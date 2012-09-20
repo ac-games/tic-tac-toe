@@ -6,9 +6,9 @@
   <%= render 'game_field', :game_state => @game_state %>
 </div>
 <div>
-  Сейчас ходит:
+  Сейчас ходит
   <div id="game-state-current-user">
     <%= @game_state.current_user.email %>
   </div>
 </div>
-<div id="game-timer"></div>
+<div id="game-timer"><%= @time %></div>

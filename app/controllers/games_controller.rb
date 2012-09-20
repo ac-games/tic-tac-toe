@@ -8,13 +8,15 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    unless @game.status == 'started'
+    unless @game.status.in? ['started', 'created']
       redirect_to games_path
     end
     @game.users << current_user
-    @game.update_attribute(:status, :started)
+    @game.update_attribute(:status, :started) if @game.status == 'created'
     
     @game_state = @game.game_state
+    
+    @time = @game_state.remaining_time
   end
   
   def create
@@ -66,18 +68,42 @@ class GamesController < ApplicationController
     end
   end
   
+  def time_is_up
+    @game = Game.find(params[:game_id])
+    respond_to do |format|
+      if @game.game_state.remaining_time == 0
+        @game.update_attribute(:status, :closed)
+        format.json { render json: {
+          status: :time_is_up,
+          win_user: @game.game_state.opponent_user.email
+        } }
+      else
+        format.json { render :json => {
+          :status => :is_not_true,
+          :remaining_time => @game.game_state.remaining_time
+        } }
+      end
+    end
+  end
+  
   def put_the_symbol
     @game = Game.find(params[:game_id])
     @game_state = @game.game_state
     respond_to do |format|
       if @game_state.current_user == current_user
+        if @game_state.remaining_time == 0
+          @game.update_attribute(:status, :closed)
+          format.json { render :json => {
+            :status => :time_is_up,
+            :win_user => @game_state.opponent_user.email
+          } }
+        end
         symbol = @game.main_user == current_user ? 'X' : 'O'
         if @game_state.put_the_symbol(symbol, params[:position])
           win_user = @game_state.who_won?
           if win_user
             options = { :status => :game_is_over, :win_user => win_user.email }
-            @game.status = 'closed'
-            @game.save
+            @game.update_attribute(:status, :closed)
           else
             @game_state.pass_the_turn
             options = { }
